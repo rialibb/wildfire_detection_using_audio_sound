@@ -6,4 +6,5 @@ numpy
 opencv-python
 scikit-image
 matplotlib
+soundfile
 chcochleagram @ git+https://github.com/jenellefeather/chcochleagram@master
