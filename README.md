@@ -12,3 +12,4 @@ To setup the repository, first create a virtual environment by running `python3 
 Then, activate it by running `source .env/bin/activate` on Unix/macOS, or `.\.env\Scripts\activate` on Windows.
 
 Finally, install the dependecies using `pip install -r requirements.txt`
+
