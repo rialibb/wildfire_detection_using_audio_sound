@@ -12,13 +12,13 @@
 
 ## For gres: either 1g.10gb:[1:10] for prod10, 2g.20gb:[1:4] for prod20, 3g.40gb:1 for prod40 or A100.80gb for prod80.
 
-#SBATCH --partition=prod10
-#SBATCH --gres=gpu:1g.10gb:1
-#SBATCH --cpus-per-task=4
-
-##SBATCH --partition=prod20
-##SBATCH --gres=gpu:2g.20gb:1
+##SBATCH --partition=prod10
+##SBATCH --gres=gpu:1g.10gb:1
 ##SBATCH --cpus-per-task=4
+
+#SBATCH --partition=prod20
+#SBATCH --gres=gpu:2g.20gb:1
+#SBATCH --cpus-per-task=4
 
 ##SBATCH --partition=prod40
 ##SBATCH --gres=gpu:3g.40gb:1
@@ -58,8 +58,7 @@ cd /raid/home/detectionfeuxdeforet/caillaud_gab/wildfire_detection
 
 # Create a directory to store the logs
 initial_date=$(date +"%Y%m%d_%H%M%S")
-mkdir -p "logs/run_$initial_date"
-
-log_dir=logs/run_"$initial_date"
+log_dir="logs/run_$initial_date"
 mkdir -p "$log_dir"
+
 python main.py > $log_dir/log.logs 2>&1
