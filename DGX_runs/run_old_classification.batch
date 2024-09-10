@@ -3,7 +3,7 @@
 ## This DGX setup code is coming from https://github.com/tboulet/research-project-template
 ## Here it uses the prod20 partition but you can change it to prod10, prod40 or prod80 by commenting/uncommenting the corresponding lines
 
-#SBATCH --job-name=run_old_classification
+#SBATCH --job-name=run_old_wildfire_classification
 #SBATCH --output=out.txt
 #SBATCH --error=out.txt
 
@@ -37,6 +37,16 @@
 
 ## Walltime limit
 #SBATCH --time=24:00:00
+
+## env variables
+
+## in order to not export env variables present at job's submission time to job's env:
+#SBATCH --export=NONE
+
+## To select explicitly exported variables from the caller's environment to the job environment:
+##SBATCH --export=VAR1,VAR2
+## You can also assign values to these exported variables, for example:
+##SBATCH --export=VAR1=10,VAR2=18
 
 
 
