@@ -16,6 +16,7 @@ import torchaudio
 class ESC(Enum):
     TEN = 10
     FIFTY = 50
+    TWO =2
 
 
 @dataclass
@@ -182,20 +183,6 @@ class ESCDataset(DownloadableDataset, SplitableDataset):
 
         return sample, label
 
-    def label_target_to_category(self, label: int) -> str:
-        """Returns the category name associated to the given label number.
-
-        Parameters
-        ----------
-        label: int
-            the label target number
-
-        Returns
-        -------
-        string
-            the category
-        """
-        return self.csv.iloc[label, 2]
 
     def get_all_labels(self) -> list[torch.Tensor]:
         """Returns all possible labels in this dataset
@@ -213,7 +200,7 @@ class ESCDatasetBin(DownloadableDataset, SplitableDataset):
         self,
         path: str = "audio/data",
         download: bool = False,
-        categories: ESC = ESC.FIFTY,
+        categories: ESC = ESC.TWO,
         train_percentage: float = 0.7,
         test_percentage: float = 0.15,
     ) -> None:
@@ -221,7 +208,7 @@ class ESCDatasetBin(DownloadableDataset, SplitableDataset):
         Args:
             path: the path to where the dataset is or should be stored
             download: whether to download the data
-            categories: whether to use ESC-10 or ESC-50
+            categories: whether to use ESC-10 or ESC-50 or ESC-2
         """
         DownloadableDataset.__init__(self=self, path=path, download=download)
         SplitableDataset.__init__(
