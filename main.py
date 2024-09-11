@@ -1,7 +1,7 @@
 from classifiers.cnn_bardou import CNNBardou
 from classifiers.crnn_zhang import ConvolutionalRNNZhang
 from classifiers.mlp_post_ast import MLPPostAst
-from datasets import ESCDataset, ESCDatasetBin
+from datasets import ESCDataset, ESCDatasetBin, ESCDatasetBinNoOverlap
 from features import Spectrogram, MelSpectrogram, Cochleagram, AstEncoder
 from models import train, FEATURES, generate_models
 
@@ -18,7 +18,6 @@ esc_dataset = ESCDataset(download=False, data_size=100) if APPROACH!=2 else ESCD
 ast_model = generate_models({"ast_Encoder": AstEncoder}, MLPPostAst, "MLP_post_AST")
 
 loaders = esc_dataset.train_test_split().into_loaders(batch_size=BATCH_SIZE)
-
 
 for model in ast_model:
     train(model=model, loaders=loaders)

@@ -295,3 +295,111 @@ class ESCDatasetBin(DownloadableDataset, SplitableDataset):
         assert sample_rate == 44100
 
         return sample, label
+
+
+
+class ESCDatasetBinNoOverlap(DownloadableDataset, SplitableDataset):
+    def __init__(
+        self,
+        path: str = "data/esc50",
+        download: bool = False,
+        categories: ESC = ESC.TWO,
+        train_percentage: float = 0.7,
+        test_percentage: float = 0.15,
+        data_size: int=100
+    ) -> None:
+        """
+        Args:
+            path: the path to where the dataset is or should be stored
+            download: whether to download the data
+            categories: whether to use ESC-10 or ESC-50 or ESC-2
+        """
+        DownloadableDataset.__init__(self=self, path=path, download=download)
+        SplitableDataset.__init__(
+            self=self,
+            train_percentage=train_percentage,
+            test_percentage=test_percentage,
+        )
+
+        self.csv = pd.read_csv(os.path.join(path, "meta/esc50.csv"))
+        self.csv=self.csv.sample(frac=1)
+
+        self.csv_fire=self.csv[self.csv["target"]==12]
+        self.csv_no_fire=self.csv[self.csv["target"]!=12].iloc[:data_size]
+
+        self.csv=pd.concat([self.csv_fire,self.csv_no_fire],axis=0)
+        self.csv=self.csv.sample(frac=1)
+
+        
+        self.csv.loc[self.csv["target"]!=12,["target"]]=0
+        self.csv.loc[self.csv["target"]==12,["target"]]=1
+
+        self.categories = categories
+        
+        
+
+    def __len__(self) -> int:
+        """Computes the size of the dataset.
+
+        Returns
+        -------
+        int
+            the size of the dataset
+        """
+        
+        return len(self.csv)
+
+    def _get_wav_file_path(self, index: int) -> str:
+        """Returns the path to the wav file corresponding to sample at given index in the csv.
+
+        Parameters
+        ----------
+        index: int
+            the index of the item in the csv annotations filemkdir
+
+        Returns
+        -------
+        string
+            the path to the wav file
+        """
+        return os.path.join(self.path, "audio", self.csv.iloc[index, 0])
+
+    def download(self):
+        """Method needed to instantiate the Dataset without error
+        """
+        raise NotImplementedError
+
+    def get_all_labels(self) -> list[torch.Tensor]:
+        """Returns all possible labels in this dataset
+
+        Returns
+        -------
+        list[torch.Tensor]
+            a list of all possible labels
+        """
+        return [x for x in self.csv["target"].unique()]
+    
+    
+    def _get_sample_label(self, index: int) -> str:
+        return self.csv.iloc[index, 2]
+    
+
+    def __getitem__(self, index: int) -> tuple[torch.Tensor, torch.Tensor]:
+        """Gets the dataset item at given index
+
+        Parameters
+        ----------
+        index: int
+            the index number where to look for the item
+
+        Returns
+        -------
+        int
+            a tuple that contains the waveform and the corrsponding label at given index
+        """
+        wav_path = self._get_wav_file_path(index)
+        label = self._get_sample_label(index)
+        sample, sample_rate = torchaudio.load(wav_path)
+        assert sample_rate == 44100
+
+        return sample, label
