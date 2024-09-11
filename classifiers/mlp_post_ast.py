@@ -1,6 +1,6 @@
 import torch
 
-from classifiers.nn_utils import Flattening, LocalResponseNorm, CNNLayer
+from classifiers.nn_utils import LocalResponseNorm, CNNLayer
 
 
 class MLPPostAst(torch.nn.Module):
@@ -8,8 +8,6 @@ class MLPPostAst(torch.nn.Module):
 
 
         super(MLPPostAst,self).__init__()
-
-        self.flatten=Flattening()
 
 
         self.linear_layers=torch.nn.Sequential(
@@ -24,8 +22,7 @@ class MLPPostAst(torch.nn.Module):
 
 
     def forward(self,x:torch.Tensor) -> torch.Tensor:
-
-        x=self.flatten(x)
+        
         x=self.linear_layers(x)
 
         return x
