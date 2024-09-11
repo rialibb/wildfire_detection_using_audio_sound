@@ -105,7 +105,8 @@ def train(
         notify(f"Validation Loss : {val_loss:.2f}  Validation Accuracy: {val_accuracy*100:.2f}%")
 
             
-        model.save(epoch=epoch)
+    model.save(epoch=epoch)
+    notify("Model saved")
 
     notify("----------------------FINISHED TRAINING----------------------")
 
