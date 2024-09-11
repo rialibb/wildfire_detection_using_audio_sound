@@ -106,8 +106,7 @@ def train(
 def generate_models(
     feature_extractions: dict[str, torch.nn.Module],
     classifier: torch.nn.Module,
-    classifier_name: str,
-    classifier_kwargs: dict
+    classifier_name: str
 ) -> SequentialSaveableModel:
     """Generates models for all given feature extractions given a classifier
 
@@ -125,13 +124,17 @@ def generate_models(
     """
 
     models = []
+    classifier_kwarg={}
+    classifier_kwarg["input_size"]=feature_extraction.output_shape
+
     for name, feature_extraction in feature_extractions.items():
         
         model = SequentialSaveableModel(
-            (feature_extraction(), name), (classifier(**classifier_kwargs), classifier_name)
+            (feature_extraction(), name), (classifier(**classifier_kwarg), classifier_name)
         )
 
         model.to(device)
         models.append(model)
+        
 
     return models
