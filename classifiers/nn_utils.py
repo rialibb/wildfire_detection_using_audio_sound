@@ -94,7 +94,7 @@ class SaveableModel(torch.nn.Module):
         epoch: int
             the epoch of the model to save
         """
-        out_dir = os.path.join("~", "output")
+        out_dir = "models_saved"
         
         # create saving dir if it doesn't exist yet
         if not os.path.exists(out_dir):
