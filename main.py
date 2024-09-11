@@ -6,7 +6,7 @@ from models import train, FEATURES, generate_models
 
 BATCH_SIZE = 50
 
-MODEL_KWARGS = {"input_size": (256, 256)} #size of a spectrogram/mel-spectrogram
+MODEL_KWARGS = {"input_size": (256, 2206)} #size of a spectrogram/mel-spectrogram
 
 
 esc_dataset = ESCDataset(download=False)
