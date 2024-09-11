@@ -28,6 +28,7 @@ def train(
     epochs: int = 100,
     learning_rate: float = 0.001,
     logging_file: str = "classifiers.log",
+    eps_early_stopping: float =  1e-7,
 ):
     """Train a neural network on the ESC-50 dataset.
 
@@ -51,6 +52,9 @@ def train(
     scheduler = OneCycleLR(optimizer,max_lr=learning_rate, epochs = 100, steps_per_epoch= len(loaders.train), pct_start = 0.1)
 
     softmax   = torch.nn.Softmax()
+
+    previous_val_accuracy = 0.0
+    count_occurence_no_change = 0
     for epoch in range(epochs):
         notify(f"----------------------- EPOCH {epoch} -----------------------")
 
@@ -78,9 +82,8 @@ def train(
         train_accuracy  = train_accuracy / len(loaders.train)
         train_loss      = train_loss / len(loaders.train)
 
-        notify(f"Train loss: {train_loss:.2f} Train accuracy :{train_accuracy*100:.2f}%")
+        notify(f"Train loss: {train_loss:.6f} Train accuracy :{train_accuracy*100:.6f}%")
         notify(f"Last value of learning rate for this epoch: {scheduler._last_lr}")
-
 
         # validation step
         model.eval()
@@ -102,9 +105,19 @@ def train(
             val_loss     = val_loss / len(loaders.valid)
 
 
-        notify(f"Validation Loss : {val_loss:.2f}  Validation Accuracy: {val_accuracy*100:.2f}%")
+        notify(f"Validation Loss : {val_loss:.6f}  Validation Accuracy: {val_accuracy*100:.6f}%")
 
-            
+        if abs(previous_val_accuracy - val_accuracy) < eps_early_stopping:
+            count_occurence_no_change += 1
+        else:
+            count_occurence_no_change = 0
+        if count_occurence_no_change >5 :
+            notify("The model has not improved for 5 epochs in a row. Early stopping.")
+            model.save(epoch=epoch)
+            notify("Model saved")
+            notify("----------------------FINISHED TRAINING----------------------")
+            break
+        previous_val_accuracy = val_accuracy
     model.save(epoch=epoch)
     notify("Model saved")
 
