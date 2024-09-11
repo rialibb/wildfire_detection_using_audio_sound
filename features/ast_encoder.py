@@ -5,6 +5,8 @@ import torchaudio
 HUGGING_FACE_AST_MODEL_NAME = "MIT/ast-finetuned-audioset-10-10-0.4593"
 # Useful documentation can be found at: https://huggingface.co/docs/transformers/main/en/model_doc/audio-spectrogram-transformer#audio-spectrogram-transformer
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 
 class AstEncoder(torch.nn.Module):
 
@@ -50,10 +52,9 @@ class AstEncoder(torch.nn.Module):
         """
         waveform                = self.resampler(waveform[0])
         # AstFeatureExtractor expects numpy input. Keeping a tensor throws an error
-        waveform_np             = waveform.numpy()
+        waveform_np             = waveform.cpu().numpy()
         input_ast_encoder       = self.feature_extractor(waveform_np, sampling_rate=self.ast_sampling_rate, return_tensors="pt")
-
-        output_model            = self.ast_model(input_ast_encoder['input_values'],
+        output_model            = self.ast_model(input_ast_encoder['input_values'].to(device),
                                                  output_attentions=False,
                                                  output_hidden_states=False,
                                                  return_dict=True)
