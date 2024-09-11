@@ -70,12 +70,51 @@ class SplitableDataset(ABC, Dataset):
         valid_size = len(self) - train_size - test_size
 
         train_dataset, valid_dataset, test_dataset = random_split(
-            self, [train_size, test_size, valid_size]
+            self, [train_size, valid_size, test_size]
         )
 
         return TrainValidTestDataset(
             train=train_dataset, valid=valid_dataset, test=test_dataset
         )
+
+
+
+
+
+
+class SplitableDatasetBin(ABC, Dataset):
+    def __init__(
+        self, train_percentage: float = 0.7, test_percentage: float = 0.15, train_index : list=list(range(1960))
+    ) -> None:
+        super().__init__()
+        self.train_percentage = train_percentage
+        self.test_percentage = test_percentage
+        self.train_index = train_index
+
+    def train_test_split(self) -> TrainValidTestDataset:
+        """Split the dataset into train and test datasets
+
+        Returns
+        -------
+        TrainValidTestDataset
+            an object holding the train dataset and the test (validation) dataset
+        """
+        train_size = int(self.train_percentage * len(self))
+        test_size = int(self.test_percentage * len(self))
+        valid_size = len(self) - train_size - test_size
+
+        train_dataset,  = self[self.index.isin(self.train_index)].sample(train_size)
+
+        valid_dataset, test_dataset = random_split(
+            self[~ self.index.isin(self.train_index)], [valid_size, test_size]
+        )
+
+
+        return TrainValidTestDataset(
+            train=train_dataset, valid=valid_dataset, test=test_dataset
+        )
+
+
 
 
 class DownloadableDataset(ABC, Dataset):
@@ -201,7 +240,7 @@ class ESCDataset(DownloadableDataset, SplitableDataset):
         return [x for x in self.csv["target"].unique()]
     
 
-class ESCDatasetBin(DownloadableDataset, SplitableDataset):
+class ESCDatasetBin(DownloadableDataset, SplitableDatasetBin):
     def __init__(
         self,
         path: str = "audio_data",
@@ -209,6 +248,7 @@ class ESCDatasetBin(DownloadableDataset, SplitableDataset):
         categories: ESC = ESC.TWO,
         train_percentage: float = 0.7,
         test_percentage: float = 0.15,
+        train_index : list=list(range(1960)),
         data_size: int=100
     ) -> None:
         """
@@ -218,15 +258,14 @@ class ESCDatasetBin(DownloadableDataset, SplitableDataset):
             categories: whether to use ESC-10 or ESC-50 or ESC-2
         """
         DownloadableDataset.__init__(self=self, path=path, download=download)
-        SplitableDataset.__init__(
+        SplitableDatasetBin.__init__(
             self=self,
             train_percentage=train_percentage,
             test_percentage=test_percentage,
+            train_index = train_index
         )
 
         self.csv = pd.read_csv("audio_data/meta/ecs2.csv")
-        self.csv=self.csv.sample(frac=1)
-        self.csv=self.csv.iloc[:data_size]
         self.categories = categories
         
 
@@ -239,7 +278,7 @@ class ESCDatasetBin(DownloadableDataset, SplitableDataset):
             the size of the dataset
         """
         
-        return len(self.csv)
+        return len(self.csv[self.csv.index.isin(self.train_index)])
 
     def _get_wav_file_path(self, index: int) -> str:
         """Returns the path to the wav file corresponding to sample at given index in the csv.
