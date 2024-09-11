@@ -10,7 +10,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class AstEncoder(torch.nn.Module):
 
-    output_shape = (1, 728)
+    output_shape = (1, 768)
 
     def __init__(self, initial_sampling_rate: int = 44100, ast_sampling_rate: int = 16000):
         """ Initializes the AstEncoder instance
