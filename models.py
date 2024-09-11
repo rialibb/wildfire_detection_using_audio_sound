@@ -55,7 +55,7 @@ def train(
         notify(f"----------------------- EPOCH {epoch} -----------------------")
 
         train_loss = 0.0
-        model.train(True)
+        model.train()
         train_accuracy = 0.0
         for batch_num, data in enumerate(loaders.train):
             waveforms, labels = data
@@ -69,7 +69,7 @@ def train(
             loss.backward()
             optimizer.step()
             scheduler.step()
-            class_prediction = softmax(predictions).argmax(dim=1)
+            class_prediction = softmax(predictions).argmax(dim=-1)
             train_accuracy += ((class_prediction == labels).sum())/class_prediction.shape[0]
 
             train_loss += loss.item()
@@ -81,8 +81,12 @@ def train(
         notify(f"Train loss: {train_loss:.2f} Train accuracy :{train_accuracy*100:.2f}%")
         notify(f"Last value of learning rate for this epoch: {scheduler._last_lr}")
 
-        with torch.no_grad():
 
+        # validation step
+        model.eval()
+
+        with torch.no_grad():
+            
             val_loss        = 0
             val_accuracy    = 0
             for batch_num, data in enumerate(loaders.valid):
@@ -90,7 +94,7 @@ def train(
                 waveforms, labels   = waveforms.to(device), labels.to(device)
                 predictions         = model(waveforms)
                 val_loss            += loss_func(predictions, labels)
-                class_prediction    = softmax(predictions).argmax(dim=1)
+                class_prediction    = softmax(predictions).argmax(dim=-1)
                 val_accuracy        += ((class_prediction == labels).sum()) / class_prediction.shape[0]
 
             # get the mean values over the all the validation batches
@@ -100,10 +104,7 @@ def train(
 
         notify(f"Validation Loss : {val_loss:.2f}  Validation Accuracy: {val_accuracy*100:.2f}%")
 
-                
-
-
-
+            
         model.save(epoch=epoch)
 
     notify("----------------------FINISHED TRAINING----------------------")
