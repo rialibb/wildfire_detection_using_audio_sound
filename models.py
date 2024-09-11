@@ -1,5 +1,7 @@
 import logging
 import torch
+from torch.optim.lr_scheduler import OneCycleLR
+
 from classifiers.nn_utils import SequentialSaveableModel, SaveableModel
 from datasets import TrainValidTestDataLoader
 from features import Spectrogram, MelSpectrogram, AstEncoder
@@ -46,54 +48,58 @@ def train(
     # We use cross-entropy as it is well-known for performing well in classification problems
     loss_func = torch.nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+    scheduler = OneCycleLR(optimizer,max_lr=learning_rate, epochs = 100, steps_per_epoch= len(loaders.train), pct_start = 0.1)
 
-    
-
+    softmax   = torch.nn.Softmax()
     for epoch in range(epochs):
         notify(f"----------------------- EPOCH {epoch} -----------------------")
 
-        running_loss = 0.0
-
+        train_loss = 0.0
+        model.train(True)
+        train_accuracy = 0.0
         for batch_num, data in enumerate(loaders.train):
             waveforms, labels = data
             waveforms, labels = waveforms.to(device), labels.to(device)
 
             # set optimizer params to zero
             optimizer.zero_grad()
+            predictions         = model(waveforms)
 
-            predictions = model(waveforms)
-
-            loss = loss_func(predictions, labels)
+            loss                = loss_func(predictions, labels)
             loss.backward()
             optimizer.step()
+            scheduler.step()
+            class_prediction = softmax(predictions).argmax(dim=1)
+            train_accuracy += ((class_prediction == labels).sum())/class_prediction.shape[0]
 
-            running_loss += loss.item()
+            train_loss += loss.item()
 
+        # get the mean values over all the batches
+        train_accuracy  = train_accuracy / len(loaders.train)
+        train_loss      = train_loss / len(loaders.train)
 
-        notify(f"Batch {batch_num}, loss: {running_loss}")
+        notify(f"Train loss: {train_loss:.2f} Train accuracy :{train_accuracy*100:.2f}%")
+        notify(f"Last value of learning rate for this epoch: {scheduler._last_lr}")
 
-        confusion = torch.zeros((50,50), dtype=torch.int16)
+        with torch.no_grad():
 
-        with torch.set_grad_enabled(False):
+            val_loss        = 0
+            val_accuracy    = 0
             for batch_num, data in enumerate(loaders.valid):
-                waveforms, labels = data
-                waveforms, labels = waveforms.to(device), labels.to(device)
-                
-                outputs = model(waveforms).tolist()
-                labels = labels.tolist()
+                waveforms, labels   = data
+                waveforms, labels   = waveforms.to(device), labels.to(device)
+                predictions         = model(waveforms)
+                val_loss            += loss_func(predictions, labels)
+                class_prediction    = softmax(predictions).argmax(dim=1)
+                val_accuracy        += ((class_prediction == labels).sum()) / class_prediction.shape[0]
 
-                for pred, truth in zip(outputs, labels):
-                    confusion[pred, truth] += 1
+            # get the mean values over the all the validation batches
+            val_accuracy = val_accuracy /  len(loaders.valid)
+            val_loss     = val_loss / len(loaders.valid)
 
-        true_preds = torch.sum(torch.diagonal(confusion))
 
-        accuracy = true_preds/torch.sum(confusion)
+        notify(f"Validation Loss : {val_loss:.2f}  Validation Accuracy: {val_accuracy*100:.2f}%")
 
-        notify(f"Accuracy: {accuracy*100:.2f}%")
-
-        torch.set_printoptions(profile="full")
-        print(confusion)
-        torch.set_printoptions(profile="default")
                 
 
 
@@ -134,6 +140,5 @@ def generate_models(
 
         model.to(device)
         models.append(model)
-        
 
     return models
