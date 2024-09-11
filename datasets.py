@@ -39,9 +39,9 @@ class TrainValidTestDataset:
         batch_size: int
             the size of the batches in the dataset
         """
-        train_loader = DataLoader(self.train, batch_size=32, shuffle=True)
-        valid_loader = DataLoader(self.valid, batch_size=32, shuffle=True)
-        test_loader = DataLoader(self.test, batch_size=32, shuffle=True)
+        train_loader = DataLoader(self.train, batch_size, shuffle=True)
+        valid_loader = DataLoader(self.valid, batch_size, shuffle=True)
+        test_loader = DataLoader(self.test, batch_size, shuffle=True)
 
         return TrainValidTestDataLoader(
             train=train_loader, valid=valid_loader, test=test_loader
