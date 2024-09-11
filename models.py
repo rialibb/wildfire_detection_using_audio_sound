@@ -124,11 +124,10 @@ def generate_models(
     """
 
     models = []
-    classifier_kwarg={}
-    classifier_kwarg["input_size"]=feature_extraction.output_shape
 
     for name, feature_extraction in feature_extractions.items():
-        
+        classifier_kwarg = {}
+        classifier_kwarg["input_size"] = feature_extraction.output_shape
         model = SequentialSaveableModel(
             (feature_extraction(), name), (classifier(**classifier_kwarg), classifier_name)
         )
