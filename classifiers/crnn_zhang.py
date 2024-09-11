@@ -109,7 +109,7 @@ class ConvolutionalRNNZhang(torch.nn.Module):
             torch.nn.Linear(512, 256),
             torch.nn.ReLU(),
             torch.nn.Dropout(p=0.5),
-            torch.nn.Linear(256, 1),
+            torch.nn.Linear(256, 2),
         )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
