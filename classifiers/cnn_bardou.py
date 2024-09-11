@@ -75,7 +75,8 @@ class CNNBardou(torch.nn.Module):
             ),
             torch.nn.ReLU(),
             # 2nd linear layer
-            torch.nn.Linear(in_features=1000, out_features=50)
+            torch.nn.Linear(in_features=1000, out_features=50),
+            torch.nn.ReLU()
         )
 
         self.norm1 = LocalResponseNorm()
