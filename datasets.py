@@ -198,7 +198,7 @@ class ESCDataset(DownloadableDataset, SplitableDataset):
 class ESCDatasetBin(DownloadableDataset, SplitableDataset):
     def __init__(
         self,
-        path: str = "audio/data",
+        path: str = "audio_data",
         download: bool = False,
         categories: ESC = ESC.TWO,
         train_percentage: float = 0.7,

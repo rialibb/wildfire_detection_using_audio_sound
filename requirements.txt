@@ -7,4 +7,5 @@ opencv-python
 scikit-image
 matplotlib
 soundfile
+transformers
 chcochleagram @ git+https://github.com/jenellefeather/chcochleagram@master
