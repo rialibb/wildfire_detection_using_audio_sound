@@ -50,10 +50,10 @@ class AstEncoder(torch.nn.Module):
         torch.Tensor
             the output of AST model's encoder
         """
-        waveform                = self.resampler(waveform[0])
+        waveform_resampled                = self.resampler(waveform)
         # AstFeatureExtractor expects numpy input. Keeping a tensor throws an error
-        waveform_np             = waveform.cpu().numpy()
-        input_ast_encoder       = self.feature_extractor(waveform_np, sampling_rate=self.ast_sampling_rate, return_tensors="pt")
+        waveform_np             = waveform_resampled.cpu().numpy()
+        input_ast_encoder       = self.feature_extractor(waveform_np.squeeze(1), sampling_rate=self.ast_sampling_rate, return_tensors="pt")
         output_model            = self.ast_model(input_ast_encoder['input_values'].to(device),
                                                  output_attentions=False,
                                                  output_hidden_states=False,
