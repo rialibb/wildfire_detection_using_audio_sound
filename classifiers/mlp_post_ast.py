@@ -19,7 +19,8 @@ class MLPPostAst(torch.nn.Module):
             torch.nn.ReLU(),
             torch.nn.Linear(in_features=256,out_features=64),
             torch.nn.ReLU(),
-            torch.nn.Linear(in_features=64,out_features=2)
+            torch.nn.Linear(in_features=64,out_features=2),
+            torch.nn.Sigmoid()
         )
 
 
