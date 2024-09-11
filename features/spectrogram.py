@@ -7,6 +7,7 @@ from helpers import duration_to_frame_numbers
 
 
 class Spectrogram(torch.nn.Module):
+    output_shape = (256, 2206)
     def __init__(
         self,
         num_frequencies: int = 256,
