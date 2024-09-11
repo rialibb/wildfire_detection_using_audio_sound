@@ -234,19 +234,6 @@ class ESCDatasetBin(DownloadableDataset, SplitableDataset):
         self.categories = categories
         
 
-    def download(self):
-        """Automatically downloads and extracts the dataset in the desired data directory"""
-        self._make_dirs()
-
-        url = "https://github.com/karoldvl/ESC-50/archive/master.zip"
-        ZIP_FILE_NAME = "temp-esc50.zip"
-
-        urllib.request.urlretrieve(url, ZIP_FILE_NAME)
-        unpack_archive(ZIP_FILE_NAME, os.path.join(self.path, ".."))
-
-        os.rename(os.path.join(self.path, "..", "ESC-50-master"), self.path)
-        os.remove(ZIP_FILE_NAME)
-
     def __len__(self) -> int:
         """Computes the size of the dataset.
 
@@ -255,10 +242,8 @@ class ESCDatasetBin(DownloadableDataset, SplitableDataset):
         int
             the size of the dataset
         """
-        if self.categories == ESC.TEN:
-            return len(self.csv[self.csv.esc10 == True])
-        else:
-            return len(self.csv)
+        
+        return len(self.csv)
 
     def _get_wav_file_path(self, index: int) -> str:
         """Returns the path to the wav file corresponding to sample at given index in the csv.
@@ -275,43 +260,6 @@ class ESCDatasetBin(DownloadableDataset, SplitableDataset):
         """
         return os.path.join(self.path, "audio", self.csv.iloc[index, 0])
 
-    def _get_sample_label(self, index: int) -> str:
-        return self.csv.iloc[index, 2]
-
-    def __getitem__(self, index: int) -> tuple[torch.Tensor, torch.Tensor]:
-        """Gets the dataset item at given index
-
-        Parameters
-        ----------
-        index: int
-            the index number where to look for the item
-
-        Returns
-        -------
-        int
-            a tuple that contains the waveform and the corrsponding label at given index
-        """
-        wav_path = self._get_wav_file_path(index)
-        label = self._get_sample_label(index)
-        sample, sample_rate = torchaudio.load(wav_path)
-        assert sample_rate == 44100
-
-        return sample, label
-
-    def label_target_to_category(self, label: int) -> str:
-        """Returns the category name associated to the given label number.
-
-        Parameters
-        ----------
-        label: int
-            the label target number
-
-        Returns
-        -------
-        string
-            the category
-        """
-        return self.csv.iloc[label, 2]
 
     def get_all_labels(self) -> list[torch.Tensor]:
         """Returns all possible labels in this dataset
