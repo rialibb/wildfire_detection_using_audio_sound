@@ -262,6 +262,11 @@ class ESCDatasetBin(DownloadableDataset, SplitableDataset):
         """
         return [x for x in self.csv["target"].unique()]
     
+    
+    def _get_sample_label(self, index: int) -> str:
+        return self.csv.iloc[index, 2]
+    
+    
     def __getitem__(self, index: int) -> tuple[torch.Tensor, torch.Tensor]:
         """Gets the dataset item at given index
 
