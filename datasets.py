@@ -261,3 +261,23 @@ class ESCDatasetBin(DownloadableDataset, SplitableDataset):
             a list of all possible labels
         """
         return [x for x in self.csv["target"].unique()]
+    
+    def __getitem__(self, index: int) -> tuple[torch.Tensor, torch.Tensor]:
+        """Gets the dataset item at given index
+
+        Parameters
+        ----------
+        index: int
+            the index number where to look for the item
+
+        Returns
+        -------
+        int
+            a tuple that contains the waveform and the corrsponding label at given index
+        """
+        wav_path = self._get_wav_file_path(index)
+        label = self._get_sample_label(index)
+        sample, sample_rate = torchaudio.load(wav_path)
+        assert sample_rate == 44100
+
+        return sample, label
