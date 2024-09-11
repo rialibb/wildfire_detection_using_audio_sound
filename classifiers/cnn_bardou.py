@@ -75,11 +75,11 @@ class CNNBardou(torch.nn.Module):
             ),
             torch.nn.ReLU(),
             # 2nd linear layer
-            torch.nn.Linear(in_features=1000, out_features=50),
-            torch.nn.ReLU(),
+            torch.nn.Linear(in_features=1000, out_features=50)
         )
 
-        self.norm = LocalResponseNorm()
+        self.norm1 = LocalResponseNorm()
+        self.norm2 = LocalResponseNorm()
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
@@ -92,9 +92,9 @@ class CNNBardou(torch.nn.Module):
             -- Input data tensor
         """
         x = self.conv_layer1(x)
-        x = self.norm(x)
+        x = self.norm1(x)
         x = self.conv_layer2(x)
-        x = self.norm(x)
+        x = self.norm2(x)
         x = self.conv_layer3(x)
         x = self.conv_layer4(x)
         x = self.conv_layer5(x)
