@@ -217,7 +217,7 @@ class ESCDatasetBin(DownloadableDataset, SplitableDataset):
             test_percentage=test_percentage,
         )
 
-        self.csv = pd.read_csv(os.path.join(path, "meta/esc2.csv"))
+        self.csv = pd.read_csv("audio_data/meta/ecs2.csv")
         self.categories = categories
         
 
@@ -247,6 +247,10 @@ class ESCDatasetBin(DownloadableDataset, SplitableDataset):
         """
         return os.path.join(self.path, "audio", self.csv.iloc[index, 0])
 
+    def download(self):
+        """Method needed to instantiate the Dataset without error
+        """
+        raise NotImplementedError
 
     def get_all_labels(self) -> list[torch.Tensor]:
         """Returns all possible labels in this dataset
