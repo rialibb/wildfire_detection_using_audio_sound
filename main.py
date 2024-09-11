@@ -1,7 +1,8 @@
 from classifiers.cnn_bardou import CNNBardou
 from classifiers.crnn_zhang import ConvolutionalRNNZhang
+from classifiers.mlp_post_ast import MLPPostAst
 from datasets import ESCDataset, ESCDatasetBin
-from features import Spectrogram, MelSpectrogram, Cochleagram
+from features import Spectrogram, MelSpectrogram, Cochleagram, AstEncoder
 from models import train, FEATURES, generate_models
 
 BATCH_SIZE = 32
@@ -14,6 +15,7 @@ esc_dataset = ESCDataset(download=False) if APPROACH!=2 else ESCDatasetBin(downl
 
 bardou_models = generate_models({"spectrogram": Spectrogram}, CNNBardou, "cnn_bardou")
 #zhang_models = generate_models(FEATURES, ConvolutionalRNNZhang, "crnn_zhang", classifier_kwargs=MODEL_KWARGS)
+#ast_model = generate_models({"ast_Encoder": AstEncoder}, MLPPostAst, "MLP_post_AST")
 
 loaders = esc_dataset.train_test_split().into_loaders(batch_size=BATCH_SIZE)
 
