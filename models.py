@@ -10,11 +10,11 @@ from features import Spectrogram, MelSpectrogram, AstEncoder
 FEATURES = {
     "spectrogram": Spectrogram,
     "mel_spectrogram": MelSpectrogram,
-    "audio_spectrogram_transformers" : AstEncoder,
+    #"audio_spectrogram_transformers" : AstEncoder,
     # "cochleagram": Cochleagram
 }
 
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 def notify(*msg: str):
     message = " ".join(msg)

@@ -95,6 +95,7 @@ class DownloadableDataset(ABC, Dataset):
 
 
 class ESCDataset(DownloadableDataset, SplitableDataset):
+
     def __init__(
         self,
         path: str = "data/esc50",
@@ -102,7 +103,9 @@ class ESCDataset(DownloadableDataset, SplitableDataset):
         categories: ESC = ESC.FIFTY,
         train_percentage: float = 0.7,
         test_percentage: float = 0.15,
+        data_size:int=100
     ) -> None:
+        
         """
         Args:
             path: the path to where the dataset is or should be stored
@@ -117,6 +120,9 @@ class ESCDataset(DownloadableDataset, SplitableDataset):
         )
 
         self.csv = pd.read_csv(os.path.join(path, "meta/esc50.csv"))
+
+        self.csv=self.csv.sample(frac=1)
+        self.csv=self.csv.iloc[:data_size]
         self.categories = categories
 
     def download(self):
@@ -203,6 +209,7 @@ class ESCDatasetBin(DownloadableDataset, SplitableDataset):
         categories: ESC = ESC.TWO,
         train_percentage: float = 0.7,
         test_percentage: float = 0.15,
+        data_size: int=100
     ) -> None:
         """
         Args:
@@ -218,6 +225,8 @@ class ESCDatasetBin(DownloadableDataset, SplitableDataset):
         )
 
         self.csv = pd.read_csv("audio_data/meta/ecs2.csv")
+        self.csv=self.csv.sample(frac=1)
+        self.csv=self.csv.iloc[:data_size]
         self.categories = categories
         
 
