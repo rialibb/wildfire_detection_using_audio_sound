@@ -158,6 +158,8 @@ def generate_models(
     classifier: torch.nn.Module
         the classifier to use
     classifier_name: the name of the classifier
+    approach: ESC
+        the number of classes to predict
 
     Returns
     list[SaveableModel]
