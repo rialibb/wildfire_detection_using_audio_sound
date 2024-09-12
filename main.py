@@ -12,7 +12,6 @@ MODEL_KWARGS = {"input_size": (256, 2206)} #size of a spectrogram/mel-spectrogra
 APPROACH = ESC.TWO  # change the approach based on 2, 10 or 50 classes
 
 
-
 esc_dataset = ESCDataset(download=False, data_size=100) if APPROACH.value!=2 else ESCDatasetBin(download=False,data_size=100, train_index= list(range(2744)))
 
 print(f"We are using {esc_dataset} for the dataset")
@@ -24,4 +23,5 @@ zhang_models = generate_models(FEATURES, ConvolutionalRNNZhang, "crnn_zhang", ap
 loaders = esc_dataset.train_test_split().into_loaders(batch_size=BATCH_SIZE)
 
 for model in zhang_models:
+
     train(model=model, loaders=loaders)
