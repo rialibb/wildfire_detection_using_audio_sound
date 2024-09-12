@@ -1,6 +1,6 @@
 import os
 import torch
-
+from datasets import ESC
 
 class Flattening(torch.nn.Module):
     """Returns a flattened version of a torch tensor

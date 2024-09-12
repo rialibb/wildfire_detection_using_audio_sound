@@ -1,9 +1,9 @@
 import torch
 
-from classifiers.nn_utils import CNNLayer
+from classifiers.nn_utils import CNNLayer,ESC
 
 class ConvolutionalRNNZhang(torch.nn.Module):
-    def __init__(self, input_size: tuple[int, int]) -> tuple[int, int]:
+    def __init__(self, input_size: tuple[int, int],approach:ESC) -> tuple[int, int]:
         """
         ConvolutionalRNN (Convolutional Reccurrent Neural Networks model from Zhang paper
         (Attention based Convolutional Recurrent Neural Network for Environmental Sound
@@ -109,7 +109,7 @@ class ConvolutionalRNNZhang(torch.nn.Module):
             torch.nn.Linear(512, 256),
             torch.nn.ReLU(),
             torch.nn.Dropout(p=0.5),
-            torch.nn.Linear(256, 2),
+            torch.nn.Linear(256, approach.value),
         )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
