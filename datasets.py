@@ -265,7 +265,7 @@ class ESCDatasetBin(DownloadableDataset, SplitableDatasetBin):
             train_index = train_index
         )
 
-        self.csv = pd.read_csv("audio_data/meta/ecs2.csv")
+        self.csv = pd.read_csv("audio_data/meta/esc2.csv")
         self.categories = categories
         
 
