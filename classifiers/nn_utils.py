@@ -3,21 +3,28 @@ import torch
 from datasets import ESC
 
 class Flattening(torch.nn.Module):
-    """Returns a flattened version of a torch tensor
-
-    Args:
-        x: the tensor to flatten
-
-    Returns:
-        the flattened tensor
-    """
-
+    
     def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Returns a flattened version of a torch tensor
+
+        Args:
+            x: the tensor to flatten
+
+        Returns:
+            the flattened tensor
+        """
         return x.view(x.size(0), -1)
 
 
 class LocalResponseNorm(torch.nn.Module):
     def __init__(self, size=5, alpha=0.0001, beta=0.75, k=1.0) -> None:
+        """
+        Args:
+            size: amount of neighbouring channels used for normalization
+            alpha: multiplicative factor. Default: 0.0001
+            beta: exponent. Default: 0.75
+            k:  additive factor. Default: 1
+        """
         super(LocalResponseNorm, self).__init__()
         self.size = size
         self.alpha = alpha
@@ -25,6 +32,18 @@ class LocalResponseNorm(torch.nn.Module):
         self.k = k
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Applies local response normalization over an input signal.
+
+        Parameters
+        ----------
+        x: torch.Tensor
+            the input tensor
+
+        Returns
+        -------
+        Tensor
+            the response
+        """
         return torch.nn.functional.local_response_norm(
             x, self.size, alpha=self.alpha, beta=self.beta, k=self.k
         )
@@ -40,6 +59,15 @@ class CNNLayer(torch.nn.Module):
         mp_kernel_size: tuple,
         mp_stride: tuple,
     ) -> None:
+        """
+        Args:
+            in_channels: number of input channels
+            out_channels: number of output channels
+            cnn_kernel_size: The convolutional layer kernel size
+            cnn_stride:  the CNN stride to apply
+            mp_kernel_size: the kernel size of the max pooling layer
+            mp_stride: the stride of the max pooling layer
+        """
 
         torch.nn.Module.__init__(self)
 
@@ -50,6 +78,7 @@ class CNNLayer(torch.nn.Module):
         self.mp_kernel_size = mp_kernel_size
         self.mp_stride = mp_stride
 
+        # define the conv layer
         self.conv_layers = torch.nn.Sequential(
             # 1st convolutional layer
             torch.nn.Conv2d(
@@ -63,6 +92,18 @@ class CNNLayer(torch.nn.Module):
         )
 
     def get_output_size(self, input_size: tuple[int, int]) -> tuple[int, int]:
+        """Find the output size of the conv layer
+
+        Parameters
+        ----------
+        input_size: tuple[int, int]
+            the input size
+
+        Returns
+        -------
+        tuple[int, int]
+            the output size
+        """
         cnn_output_size = (
             ((input_size[0] - self.cnn_kernel_size[0]) // self.cnn_stride[0]) + 1,
             ((input_size[1] - self.cnn_kernel_size[1]) // self.cnn_stride[1]) + 1,
@@ -74,11 +115,24 @@ class CNNLayer(torch.nn.Module):
         )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """find the output of teh conv layer
+
+        Parameters
+        ----------
+        x: torch.Tensor
+            the input tensor
+
+        Returns
+        -------
+        torch.Tensor
+            the output tensor
+        """
         return self.conv_layers(x)
 
 
 class SaveableModel(torch.nn.Module):
     def __init__(self, name: str, *args, **kwargs) -> None:
+        
         """A model that can be saved"""
         super().__init__(*args, **kwargs)
 

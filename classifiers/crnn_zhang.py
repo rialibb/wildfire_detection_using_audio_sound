@@ -16,6 +16,7 @@ class ConvolutionalRNNZhang(torch.nn.Module):
         """
         super(ConvolutionalRNNZhang, self).__init__()
 
+        # define the first Conv layer
         self.conv_layer1 = CNNLayer(
             in_channels=1,
             out_channels=32,
@@ -25,6 +26,7 @@ class ConvolutionalRNNZhang(torch.nn.Module):
             mp_stride=(1, 1),
         )
 
+        # define the second Conv layer
         self.conv_layer2 = CNNLayer(
             in_channels=32,
             out_channels=32,
@@ -34,6 +36,7 @@ class ConvolutionalRNNZhang(torch.nn.Module):
             mp_stride=(4, 3),
         )
 
+        # define the third Conv layer
         self.conv_layer3 = CNNLayer(
             in_channels=32,
             out_channels=64,
@@ -43,6 +46,7 @@ class ConvolutionalRNNZhang(torch.nn.Module):
             mp_stride=(1, 1),
         )
 
+        # define the forth Conv layer
         self.conv_layer4 = CNNLayer(
             in_channels=64,
             out_channels=64,
@@ -52,6 +56,7 @@ class ConvolutionalRNNZhang(torch.nn.Module):
             mp_stride=(4, 1),
         )
 
+        # define the fifth Conv layer
         self.conv_layer5 = CNNLayer(
             in_channels=64,
             out_channels=128,
@@ -61,6 +66,7 @@ class ConvolutionalRNNZhang(torch.nn.Module):
             mp_stride=(1, 1),
         )
 
+        # define the sixth Conv layer
         self.conv_layer6 = CNNLayer(
             in_channels=128,
             out_channels=128,
@@ -70,6 +76,7 @@ class ConvolutionalRNNZhang(torch.nn.Module):
             mp_stride=(1, 3),
         )
 
+        # define the seventh Conv layer
         self.conv_layer7 = CNNLayer(
             in_channels=128,
             out_channels=256,
@@ -79,6 +86,7 @@ class ConvolutionalRNNZhang(torch.nn.Module):
             mp_stride=(1, 1),
         )
 
+        # define the eighth Conv layer
         self.conv_layer8 = CNNLayer(
             in_channels=256,
             out_channels=256,
@@ -88,6 +96,7 @@ class ConvolutionalRNNZhang(torch.nn.Module):
             mp_stride=(2, 2),
         )
 
+        # find the output size of the Conv layers 
         input_size = self.conv_layer1.get_output_size(input_size=input_size)
         input_size = self.conv_layer2.get_output_size(input_size=input_size)
         input_size = self.conv_layer3.get_output_size(input_size=input_size)
@@ -97,14 +106,18 @@ class ConvolutionalRNNZhang(torch.nn.Module):
         input_size = self.conv_layer7.get_output_size(input_size=input_size)
         input_size = self.conv_layer8.get_output_size(input_size=input_size)
 
+        # define a GRU layer
         self.gru_layer = torch.nn.GRU(
             256, 256, num_layers=2, bidirectional=True, batch_first=True
         )
 
+        # define a Dropout layer
         self.dropout_layer = torch.nn.Dropout(p=0.5)
 
+        # define a Tanh activation layer
         self.tanh_layer = torch.nn.Tanh()
 
+        # define a Linear layer
         self.linear_layers = torch.nn.Sequential(
             torch.nn.Linear(512, 256),
             torch.nn.ReLU(),
