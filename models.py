@@ -3,8 +3,9 @@ import torch
 from torch.optim.lr_scheduler import OneCycleLR
 
 from classifiers.nn_utils import SequentialSaveableModel, SaveableModel
-from datasets import TrainValidTestDataLoader
+from datasets import TrainValidTestDataLoader,ESC
 from features import Spectrogram, MelSpectrogram, AstEncoder
+
 
 
 FEATURES = {
@@ -123,7 +124,8 @@ def train(
 def generate_models(
     feature_extractions: dict[str, torch.nn.Module],
     classifier: torch.nn.Module,
-    classifier_name: str
+    classifier_name: str,
+    approach:ESC
 ) -> SequentialSaveableModel:
     """Generates models for all given feature extractions given a classifier
 
@@ -145,6 +147,7 @@ def generate_models(
     for name, feature_extraction in feature_extractions.items():
         classifier_kwarg = {}
         classifier_kwarg["input_size"] = feature_extraction.output_shape
+        classifier_kwarg["approach"]=approach
         model = SequentialSaveableModel(
             (feature_extraction(), name), (classifier(**classifier_kwarg), classifier_name)
         )

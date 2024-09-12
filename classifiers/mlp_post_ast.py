@@ -1,10 +1,10 @@
 import torch
 
-from classifiers.nn_utils import LocalResponseNorm, CNNLayer
+from classifiers.nn_utils import LocalResponseNorm, CNNLayer,ESC
 
 
 class MLPPostAst(torch.nn.Module):
-    def __init__(self, input_size:tuple[int,int]) -> tuple[int,int]:
+    def __init__(self, input_size:tuple[int,int],approach:ESC) -> tuple[int,int]:
 
 
         super(MLPPostAst,self).__init__()
@@ -17,7 +17,7 @@ class MLPPostAst(torch.nn.Module):
             torch.nn.ReLU(),
             torch.nn.Linear(in_features=256,out_features=64),
             torch.nn.ReLU(),
-            torch.nn.Linear(in_features=64,out_features=2)
+            torch.nn.Linear(in_features=64,out_features=approach.value)
         )
 
 
