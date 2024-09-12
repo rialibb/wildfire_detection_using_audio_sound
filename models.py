@@ -55,8 +55,8 @@ def train(
 
     previous_val_accuracy = 0.0
     count_occurence_no_change = 0
+    notify(f"----------------------- Starting training -----------------------")
     for epoch in range(epochs):
-        notify(f"----------------------- EPOCH {epoch} -----------------------")
 
         train_loss = 0.0
         model.train()
@@ -82,9 +82,6 @@ def train(
         train_accuracy  = train_accuracy / len(loaders.train)
         train_loss      = train_loss / len(loaders.train)
 
-        notify(f"Train loss: {train_loss:.6f} Train accuracy :{train_accuracy*100:.6f}%")
-        notify(f"Last value of learning rate for this epoch: {scheduler._last_lr}")
-
         # validation step
         model.eval()
 
@@ -104,8 +101,7 @@ def train(
             val_accuracy = val_accuracy /  len(loaders.valid)
             val_loss     = val_loss / len(loaders.valid)
 
-
-        notify(f"Validation Loss : {val_loss:.6f}  Validation Accuracy: {val_accuracy*100:.6f}%")
+        notify(f"Epoch {epoch} Train loss: {train_loss:.6f}     Train accuracy :{train_accuracy*100:.6f}%       Validation Loss : {val_loss:.6f}        Validation Accuracy: {val_accuracy*100:.6f}%        Last value of learning rate for this epoch: {scheduler._last_lr}")
 
         if abs(previous_val_accuracy - val_accuracy) < eps_early_stopping:
             count_occurence_no_change += 1
