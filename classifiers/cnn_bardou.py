@@ -15,6 +15,7 @@ class CNNBardou(torch.nn.Module):
         """
         super(CNNBardou,self).__init__()
 
+        # define the first Conv layer
         self.conv_layer1 = CNNLayer(
             in_channels=1,
             out_channels=64,
@@ -24,6 +25,7 @@ class CNNBardou(torch.nn.Module):
             mp_stride=(2, 2),
         )
 
+        # define the second Conv layer
         self.conv_layer2 = CNNLayer(
             in_channels=64,
             out_channels=128,
@@ -33,6 +35,7 @@ class CNNBardou(torch.nn.Module):
             mp_stride=(2, 2),
         )
 
+        # define the third Conv layer
         self.conv_layer3 = CNNLayer(
             in_channels=128,
             out_channels=256,
@@ -42,6 +45,7 @@ class CNNBardou(torch.nn.Module):
             mp_stride=(2, 2),
         )
 
+        # define the forth Conv layer
         self.conv_layer4 = CNNLayer(
             in_channels=256,
             out_channels=384,
@@ -51,6 +55,7 @@ class CNNBardou(torch.nn.Module):
             mp_stride=(2, 2),
         )
 
+        # define the fifth Conv layer
         self.conv_layer5 = CNNLayer(
             in_channels=384,
             out_channels=256,
@@ -60,14 +65,17 @@ class CNNBardou(torch.nn.Module):
             mp_stride=(2, 2),
         )
 
+        # find the output size of the Conv layers 
         input_size = self.conv_layer1.get_output_size(input_size=input_size)
         input_size = self.conv_layer2.get_output_size(input_size=input_size)
         input_size = self.conv_layer3.get_output_size(input_size=input_size)
         input_size = self.conv_layer4.get_output_size(input_size=input_size)
         input_size = self.conv_layer5.get_output_size(input_size=input_size)
 
+        # define a Flatten layer
         self.flatten = Flattening()
 
+        # define a linear layers
         self.linear_layers = torch.nn.Sequential(
             # 1st linear layer
             torch.nn.Linear(
@@ -78,6 +86,7 @@ class CNNBardou(torch.nn.Module):
             torch.nn.Linear(in_features=1000, out_features=2),
         )
 
+        # define normalization layer
         self.norm1 = LocalResponseNorm()
         self.norm2 = LocalResponseNorm()
 

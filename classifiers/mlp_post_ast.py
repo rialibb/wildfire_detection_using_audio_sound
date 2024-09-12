@@ -5,7 +5,15 @@ from classifiers.nn_utils import LocalResponseNorm, CNNLayer
 
 class MLPPostAst(torch.nn.Module):
     def __init__(self, input_size:tuple[int,int]) -> tuple[int,int]:
+        """
+        MLPostAst model(MLP layers after the AST model) 
+        These layers takes the output of the pre-trained AST model and returns the logits for each class
 
+        Parameters
+        ----------
+        input_size : tuple
+            -- Input size (length, height)
+        """
 
         super(MLPPostAst,self).__init__()
 
@@ -22,7 +30,15 @@ class MLPPostAst(torch.nn.Module):
 
 
     def forward(self,x:torch.Tensor) -> torch.Tensor:
-        
+        """
+        Forward method for the MLPostAst model for AST
+        Computes and returns prediction of the model for the data x.
+
+        Parameters
+        ----------
+        x : torch.Tensor
+            -- Input data tensor
+        """
         x=self.linear_layers(x)
 
         return x
