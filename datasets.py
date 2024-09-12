@@ -4,9 +4,10 @@ from enum import Enum
 from shutil import unpack_archive
 import os
 import os.path
+import numpy as np
 
 
-from torch.utils.data import Dataset, DataLoader, random_split
+from torch.utils.data import Dataset, DataLoader, random_split, Subset
 import pandas as pd
 import urllib.request
 import torch
@@ -99,16 +100,16 @@ class SplitableDatasetBin(ABC, Dataset):
         TrainValidTestDataset
             an object holding the train dataset and the test (validation) dataset
         """
-        train_size = int(self.train_percentage * len(self))
-        test_size = int(self.test_percentage * len(self))
-        valid_size = len(self) - train_size - test_size
 
-        train_dataset = self.csv[self.csv.index.isin(self.train_index)].sample(train_size)
 
-        valid_dataset, test_dataset,_ = random_split(
-            self.csv[~ self.csv.index.isin(self.train_index)], [valid_size, test_size, len(self.csv)//2 - valid_size -test_size]
-        )
+        train_dataset = Subset(self, self.train_index)
 
+        val_test_indices = np.array(self.csv[~self.csv.index.isin(self.train_index)].index)
+        np.random.shuffle(val_test_indices)
+        valid_indices = val_test_indices[:len(val_test_indices) // 2]
+        test_indices = val_test_indices[len(val_test_indices) // 2:]
+        valid_dataset = Subset(self, valid_indices)
+        test_dataset = Subset(self, test_indices)
 
         return TrainValidTestDataset(
             train=train_dataset, valid=valid_dataset, test=test_dataset
@@ -293,7 +294,7 @@ class ESCDatasetBin(DownloadableDataset, SplitableDatasetBin):
         string
             the path to the wav file
         """
-        return os.path.join(self.path, "audio", self.csv.iloc[index, 0])
+        return os.path.join(self.path, "audio", self.csv.loc[index, 'filename'])
 
     def download(self):
         """Method needed to instantiate the Dataset without error
