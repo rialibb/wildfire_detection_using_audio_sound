@@ -1,7 +1,7 @@
 import logging
 import torch
 from torch.optim.lr_scheduler import OneCycleLR
-
+import datetime
 from classifiers.nn_utils import SequentialSaveableModel, SaveableModel
 from datasets import TrainValidTestDataLoader
 from features import Spectrogram, MelSpectrogram, AstEncoder
@@ -44,6 +44,8 @@ def train(
         the learning rate to use for training
     """
 
+    date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    notify(f"{date}")
     logging.basicConfig(filename=logging_file)
 
     # We use cross-entropy as it is well-known for performing well in classification problems
@@ -101,7 +103,7 @@ def train(
             val_accuracy = val_accuracy /  len(loaders.valid)
             val_loss     = val_loss / len(loaders.valid)
 
-        notify(f"Epoch {epoch} Train loss: {train_loss:.6f}     Train accuracy :{train_accuracy*100:.6f}%       Validation Loss : {val_loss:.6f}        Validation Accuracy: {val_accuracy*100:.6f}%        Last value of learning rate for this epoch: {scheduler._last_lr}")
+        notify(f"Epoch {str(epoch).rjust(3)} Train loss: {train_loss:.6f} Train accuracy: {train_accuracy*100:.6f}% Validation Loss : {val_loss:.6f} Validation Accuracy: {val_accuracy*100:.6f}%  Last value of learning rate for this epoch: {scheduler.get_last_lr()}")
 
         if abs(previous_val_accuracy - val_accuracy) < eps_early_stopping:
             count_occurence_no_change += 1
