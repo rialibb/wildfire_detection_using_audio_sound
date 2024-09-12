@@ -7,6 +7,9 @@ from features.spectrogram import Spectrogram
 
 
 class MelSpectrogram(torch.nn.Module):
+
+    output_shape = (256, 2206)
+
     def __init__(
         self,
         n_mels: int = 128,
