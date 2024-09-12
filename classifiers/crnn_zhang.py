@@ -13,6 +13,8 @@ class ConvolutionalRNNZhang(torch.nn.Module):
         ----------
         input_size : tuple
             -- Input size (length, height)
+        approach: ESC
+            the type of approach (ESC2, ESC10 or ESC50)
         """
         super(ConvolutionalRNNZhang, self).__init__()
 

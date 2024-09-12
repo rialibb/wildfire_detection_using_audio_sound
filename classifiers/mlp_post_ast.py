@@ -4,7 +4,7 @@ from classifiers.nn_utils import LocalResponseNorm, CNNLayer,ESC
 
 
 class MLPPostAst(torch.nn.Module):
-    def __init__(self, input_size:tuple[int,int]) -> tuple[int,int]:
+    def __init__(self, input_size:tuple[int,int],approach:ESC) -> tuple[int,int]:
         """
         MLPostAst model(MLP layers after the AST model) 
         These layers takes the output of the pre-trained AST model and returns the logits for each class
@@ -13,6 +13,8 @@ class MLPPostAst(torch.nn.Module):
         ----------
         input_size : tuple
             -- Input size (length, height)
+        approach: ESC
+            the type of approach (ESC2, ESC10 or ESC50)
         """
 
         super(MLPPostAst,self).__init__()
