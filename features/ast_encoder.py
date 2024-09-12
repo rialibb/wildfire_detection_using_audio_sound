@@ -53,7 +53,9 @@ class AstEncoder(torch.nn.Module):
         waveform_resampled                = self.resampler(waveform)
         # AstFeatureExtractor expects numpy input. Keeping a tensor throws an error
         waveform_np             = waveform_resampled.cpu().numpy()
+        # use built-in feature extractor specific to AST. Returns torch tensors
         input_ast_encoder       = self.feature_extractor(waveform_np.squeeze(1), sampling_rate=self.ast_sampling_rate, return_tensors="pt")
+        # forward pass through the AST model
         output_model            = self.ast_model(input_ast_encoder['input_values'].to(device),
                                                  output_attentions=False,
                                                  output_hidden_states=False,
@@ -64,10 +66,3 @@ class AstEncoder(torch.nn.Module):
         audio_encoding      = encoder_output[:, 0, :]
 
         return audio_encoding
-
-# TODO test code : to delete when pipeline is working
-#ast_encoder = AstEncoder()
-#audio =  torchaudio.load("../data/esc50/audio/1-137-A-32.wav")
-# audio_resampled = transform(audio[0])
-# output_encoder = ast_encoder(audio[0])
-# print(output_encoder.shape)

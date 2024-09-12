@@ -1,6 +1,6 @@
 import os
 import torch
-
+from datasets import ESC
 
 class Flattening(torch.nn.Module):
     
@@ -183,7 +183,7 @@ class SequentialSaveableModel(SaveableModel, torch.nn.Sequential):
 
         self.sequence = seq
         full_name = "_".join(names)
-
+        self.full_name = full_name
 
         SaveableModel.__init__(self, full_name)
 

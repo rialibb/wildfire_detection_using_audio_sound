@@ -2,7 +2,7 @@ import torch
 
 
 class PCA(torch.nn.Module):
-    def __init__(self, PCA_limit=10, center=True):
+    def __init__(self, PCA_limit : int = 10, center: bool = True):
         """
         PCA (Principal Component Analysis) class constructor.
         
@@ -11,14 +11,19 @@ class PCA(torch.nn.Module):
 
         Parameters
         ----------
-        PCA_limit : scalar
+        PCA_limit : int
             -- number of principal component kept at the end
-        center : booleen
+        center : bool
             -- Whether to center the feature_value. Default is True.
         """
 
-        self.center = center
-        self.PCA_limit = PCA_limit
+        super(PCA, self).__init__()
+        self.center         = center
+        self.PCA_limit      = PCA_limit
+
+        self.n_samples      = None
+        self.components     = None
+        self.explained_variance = None
 
     def SVD(self, feature_value):
         """
@@ -27,18 +32,19 @@ class PCA(torch.nn.Module):
         
         Parameters
         ----------
-        x : torch.Tensor
+        feature_value : torch.Tensor
             -- Input feature_value tensor
 
         """
+        # center the values
         if self.center:
             feature_value = feature_value - torch.mean(feature_value, dim=0)
 
-        n_samples, n_features = feature_value.shape
-        self.n_samples = n_samples
+        # retrieve shapes
+        self.n_samples = feature_value.shape[0]
+        self.PCA_limit = feature_value.shape[1]
 
-        self.PCA_limit = n_features
-
+        # perform PCA
         U, S, V = torch.svd(feature_value)
 
         self.components = V.T[:, :self.PCA_limit]
@@ -51,7 +57,7 @@ class PCA(torch.nn.Module):
         
         Parameters
         ----------
-        feature_valuex : torch.Tensor
+        feature_value : torch.Tensor
             -- Input feature_value tensor.
         
         Returns
@@ -60,12 +66,13 @@ class PCA(torch.nn.Module):
             -- Transformed feature_value using the principal components.
 
         """
-        if self.center:
-            feature_value = feature_value - torch.mean(feature_value, dim=0)
-        
-        self.new_features=torch.matmul(feature_value, self.components)
 
-        return self.new_features
+        if self.center:
+            # center values
+            feature_value = feature_value - torch.mean(feature_value, dim=0)
+        # compute new features
+        new_features = torch.matmul(feature_value, self.components)
+        return new_features
 
 
 # Example of usage:
@@ -85,5 +92,4 @@ if __name__ == "__main__":
 
     print("Top Principal Components:")
     print(pca.components)
-    print("Explained Variance:")
-    print(pca.explained_variance)
+    print(f"Explained Variance: {pca.explained_variance}")
