@@ -103,10 +103,10 @@ class SplitableDatasetBin(ABC, Dataset):
         test_size = int(self.test_percentage * len(self))
         valid_size = len(self) - train_size - test_size
 
-        train_dataset,  = self.csv[self.csv.index.isin(self.train_index)].sample(train_size)
+        train_dataset = self.csv[self.csv.index.isin(self.train_index)].sample(train_size)
 
-        valid_dataset, test_dataset = random_split(
-            self[~ self.csv.index.isin(self.train_index)], [valid_size, test_size]
+        valid_dataset, test_dataset,_ = random_split(
+            self.csv[~ self.csv.index.isin(self.train_index)], [valid_size, test_size, len(self.csv)//2 - valid_size -test_size]
         )
 
 
