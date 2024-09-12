@@ -107,13 +107,13 @@ def train(
             count_occurence_no_change += 1
         else:
             count_occurence_no_change = 0
+            previous_val_accuracy = val_accuracy
         if count_occurence_no_change >5 :
             notify("The model has not improved for 5 epochs in a row. Early stopping.")
-            model.save(epoch=epoch)
             notify("Model saved")
             notify("----------------------FINISHED TRAINING----------------------")
             break
-        previous_val_accuracy = val_accuracy
+        
     model.save(epoch=epoch)
     notify("Model saved")
 
