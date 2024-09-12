@@ -21,12 +21,12 @@ class MelSpectrogram(torch.nn.Module):
 
         Parameters
         ----------
-        n_mels: int, optional
+        n_mels: int, optional. Defaults to 128
             the number of mel filterbanks
         num_frequencies: int, optional
-            the number of frequencies to sample on in the Spectrogram. Defaults to 201.
-        window_length: int, optional
-            the length of the spectrogram window in the Spectrogram, when using forward, in frames. Defaults to 10.
+            the number of frequencies to sample on in the Spectrogram. Defaults to 256.
+        window_size: int, optional
+            the length of the spectrogram window in the Spectrogram, when using forward, in frames. Defaults to 300.
         hop_size: int, optional
             the distance between two spectrogram windows, when using forward, in frames. Defaults to win_length/2.
         """
