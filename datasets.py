@@ -85,7 +85,7 @@ class SplitableDataset(ABC, Dataset):
 
 class SplitableDatasetBin(ABC, Dataset):
     def __init__(
-        self, train_percentage: float = 0.7, test_percentage: float = 0.15, train_index : list=list(range(1960))
+        self, train_percentage: float = 0.7, test_percentage: float = 0.15, train_index : list=list(range(2744))
     ) -> None:
         super().__init__()
         self.train_percentage = train_percentage
@@ -249,7 +249,7 @@ class ESCDatasetBin(DownloadableDataset, SplitableDatasetBin):
         categories: ESC = ESC.TWO,
         train_percentage: float = 0.7,
         test_percentage: float = 0.15,
-        train_index : list=list(range(1960)),
+        train_index : list=list(range(2744)),
         data_size: int=100
     ) -> None:
         """
