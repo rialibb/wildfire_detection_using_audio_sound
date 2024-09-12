@@ -15,11 +15,12 @@ esc_dataset = ESCDataset(download=False, data_size=100) if APPROACH!=2 else ESCD
 
 print(f"We are using {esc_dataset} for the dataset")
 print(f"Type of approach : {APPROACH}")
-#bardou_models = generate_models({"spectrogram": Spectrogram}, CNNBardou, "cnn_bardou")
-#zhang_models = generate_models(FEATURES, ConvolutionalRNNZhang, "crnn_zhang", classifier_kwargs=MODEL_KWARGS)
-ast_model = generate_models({"ast_Encoder": AstEncoder}, MLPPostAst, "MLP_post_AST")
+
+models = generate_models({"spectrogram": Spectrogram}, CNNBardou, "cnn_bardou")
+# models = generate_models(FEATURES, ConvolutionalRNNZhang, "crnn_zhang", classifier_kwargs=MODEL_KWARGS)
+# models = generate_models({"ast_Encoder": AstEncoder}, MLPPostAst, "MLP_post_AST")
 
 loaders = esc_dataset.train_test_split().into_loaders(batch_size=BATCH_SIZE)
 
-for model in ast_model:
+for model in models:
     train(model=model, loaders=loaders)
