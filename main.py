@@ -1,8 +1,10 @@
 from classifiers.cnn_bardou import CNNBardou
 from classifiers.crnn_zhang import ConvolutionalRNNZhang
 from classifiers.mlp_post_ast import MLPPostAst
+from classifiers.mlp_post_crnn_pretrained import MlpPostCrnnPetrained
 from datasets import ESCDataset, ESCDatasetBin, ESC
 from features import Spectrogram, MelSpectrogram, Cochleagram, AstEncoder
+from features.crnn_pretrained import CRNNPretrainedFeature
 from models import train, FEATURES, generate_models
 
 BATCH_SIZE = 32
@@ -20,13 +22,14 @@ print(f"Type of approach : {APPROACH}")
 
 #Uncomment the model to use
 
-#bardou_models = generate_models({"spectrogram": Spectrogram}, CNNBardou, "cnn_bardou",approach=APPROACH)
-zhang_models = generate_models(FEATURES, ConvolutionalRNNZhang, "crnn_zhang", approach=APPROACH)
-#ast_model = generate_models({"ast_Encoder": AstEncoder}, MLPPostAst, "MLP_post_AST",approach=APPROACH)
+# models = generate_models({"spectrogram": Spectrogram}, CNNBardou, "cnn_bardou",approach=APPROACH)
+# models = generate_models(FEATURES, ConvolutionalRNNZhang, "crnn_zhang", approach=APPROACH)
+# models = generate_models({"ast_Encoder": AstEncoder}, MLPPostAst, "MLP_post_AST",approach=APPROACH)
+models = generate_models({'crnn_pretrained': CRNNPretrainedFeature},MlpPostCrnnPetrained, "MPL_post_petrained_CRNN", approach=APPROACH )
 
-#creating the train/test dataset
+# creating the train/test dataset
 loaders = esc_dataset.train_test_split().into_loaders(batch_size=BATCH_SIZE)
 
 #run the training process for each features
-for model in zhang_models:
+for model in models:
     train(model=model, loaders=loaders)
