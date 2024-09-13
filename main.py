@@ -11,7 +11,7 @@ BATCH_SIZE = 32
 
 MODEL_KWARGS = {"input_size": (256, 2206)} # size of a spectrogram/mel-spectrogram
 
-APPROACH = ESC.TEN  # change the approach based on 2, 10 or 50 classes
+APPROACH = ESC.TWO  # change the approach based on 2, 10 or 50 classes
 
 # load de the dataset based on the approach selected
 esc_dataset = ESCDataset(download=False,categories=APPROACH) if APPROACH.value!=2 else ESCDatasetBin(download=False, train_index= list(range(2744)))
