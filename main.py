@@ -3,7 +3,7 @@ from classifiers.crnn_zhang import ConvolutionalRNNZhang
 from classifiers.mlp_post_ast import MLPPostAst
 from classifiers.ast_zero import AstZero
 from datasets import ESCDataset, ESCDatasetBin, ESC
-from features import Spectrogram, MelSpectrogram, Cochleagram, AstEncoder
+from features import Spectrogram, MelSpectrogram, Cochleagram, AstEncoder, AstFeatureZero
 from models import train, FEATURES, generate_models
 
 BATCH_SIZE = 32
@@ -24,7 +24,7 @@ print(f"Type of approach : {APPROACH}")
 #bardou_models = generate_models({"spectrogram": Spectrogram}, CNNBardou, "cnn_bardou",approach=APPROACH)
 #zhang_models = generate_models(FEATURES, ConvolutionalRNNZhang, "crnn_zhang", approach=APPROACH)
 #ast_model = generate_models({"ast_Encoder": AstEncoder}, MLPPostAst, "MLP_post_AST",approach=APPROACH)
-ast_zero=generate_models({"spectrogram":Spectrogram},AstZero,"ast_zero",approach=APPROACH)
+ast_zero=generate_models({"spectrogram":AstFeatureZero},AstZero,"ast_zero",approach=APPROACH)
 
 #creating the train/test dataset
 loaders = esc_dataset.train_test_split().into_loaders(batch_size=BATCH_SIZE)
