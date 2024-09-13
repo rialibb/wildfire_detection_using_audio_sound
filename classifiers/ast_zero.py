@@ -1,7 +1,7 @@
 import torch
 
 from classifiers.nn_utils import ESC
-from transformers import ASTModel
+from transformers import ASTModel, ASTConfig
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -22,7 +22,8 @@ class AstZero(torch.nn.Module):
 
         super(AstZero,self).__init__()
 
-        self.ast_model = ASTModel()
+        config = ASTConfig()
+        self.ast_model = ASTModel(config=config)
 
         self.linear_layers=torch.nn.Sequential(
             torch.nn.Linear(self.ast_model.config.hidden_size ,out_features=512),
