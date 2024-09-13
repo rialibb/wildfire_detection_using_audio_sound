@@ -126,7 +126,7 @@ def train(
 
         notify(f"Epoch {str(epoch).rjust(3)} Train loss: {train_loss:.6f} Train accuracy: {train_accuracy*100:.6f}% Validation Loss : {val_loss:.6f} Validation Accuracy: {val_accuracy*100:.6f}%  Last value of learning rate for this epoch: {scheduler.get_last_lr()}")
         # verify if the accuracy improvement is higher than early stopping parameter
-        if abs(previous_val_accuracy - val_accuracy) < eps_early_stopping:
+        if  (val_accuracy - previous_val_accuracy)  < eps_early_stopping:
             count_occurence_no_change += 1
         else:
             count_occurence_no_change = 0
