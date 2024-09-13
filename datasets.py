@@ -58,7 +58,7 @@ class TrainValidTestDataset:
 
 class SplitableDataset(ABC, Dataset):
     def __init__(
-        self, train_percentage: float = 0.7, test_percentage: float = 0.15
+        self, train_percentage: float = 0.7, test_percentage: float = 0.15, random_seed :  int = 0
     ) -> None:
         """
         Args:
@@ -66,8 +66,9 @@ class SplitableDataset(ABC, Dataset):
             test_percentage: test percentage
         """
         super().__init__()
-        self.train_percentage = train_percentage
-        self.test_percentage = test_percentage
+        self.train_percentage   = train_percentage
+        self.test_percentage    = test_percentage
+        self.random_seed        = random_seed
 
     def train_test_split(self) -> TrainValidTestDataset:
         """Split the dataset into train and test datasets
@@ -81,8 +82,10 @@ class SplitableDataset(ABC, Dataset):
         test_size = int(self.test_percentage * len(self))
         valid_size = len(self) - train_size - test_size
 
+        # random numbers generator for reproductible results
+        random_generator = torch.Generator().manual_seed(self.random_seed)
         train_dataset, valid_dataset, test_dataset = random_split(
-            self, [train_size, valid_size, test_size]
+            self, [train_size, valid_size, test_size], generator=random_generator
         )
 
         return TrainValidTestDataset(
@@ -90,24 +93,25 @@ class SplitableDataset(ABC, Dataset):
         )
 
 
-
-
-
-
 class SplitableDatasetBin(ABC, Dataset):
     def __init__(
-        self, train_percentage: float = 0.7, test_percentage: float = 0.15, train_index : list=list(range(2744))
+        self, train_percentage: float = 0.7, test_percentage: float = 0.15, train_index : list=list(range(2744)), random_seed: int =0,
     ) -> None:
         """
         Args:
-            train_percentage: train percentage
-            test_percentage: test percentage
-            train_index: training data index input dataframe 
+            train_percentage: float
+                train percentage
+            test_percentage: float
+                test percentage
+            train_index: List[int]
+                training data index input dataframe
+            random_seed: random seed for reproducibility. Defaults to 0
         """
         super().__init__()
-        self.train_percentage = train_percentage
-        self.test_percentage = test_percentage
-        self.train_index = train_index
+        self.train_percentage   = train_percentage
+        self.test_percentage    = test_percentage
+        self.train_index        = train_index
+        self.random_seed        =random_seed
 
     def train_test_split(self) -> TrainValidTestDataset:
         """Split the dataset into train and test datasets
@@ -117,7 +121,9 @@ class SplitableDatasetBin(ABC, Dataset):
         TrainValidTestDataset
             an object holding the train dataset and the test (validation) dataset
         """
-        # retrive the training dataset
+        # set random seed for reproducibility
+        np.random.seed(self.random_seed)
+        # retrieve the training dataset
         train_dataset = Subset(self, self.train_index)
 
         # retrieve validation and test data
