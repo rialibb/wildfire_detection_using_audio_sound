@@ -101,7 +101,24 @@ We made significant modifications to this file, since the train function from th
 
 We changed the `generate_models` function so that it uses the `output_shape`class attribute of the features when that information is needed in the classifier.
 
+### datasets.py
+
+In this file, we also made many modifications in order to add our binary classification approach. 
+
+- class `SplitableDatasetBin` : This  new class is added in order to perform the dinary dataset split into training, validation and testing sets. The index of the training observations is fixed and received as input in order to prevent information overlapping between the training and the val/test steps.
+- class `ESCDatasetBin` : This is a subclass of SplitableDatasetBin and DownloadableDataset that will define the different methods needed for binary classification. 
+
+### data_augmentation.py
+
+Since our initial ESC50 dataset contains 50 classes with 40 observations each, converting this data to a binary classification will cause an imbalance between the fire and no fire classes. To solve this issue, we implemented a data augmentation approach.
+
+- `data_augmentation.py` : This file contains the needed steps to perform data augmentation. it enale to create the datasets for training and val/test steps.
+  - function `delete_audio` : this funciton will delete existing audio file in `audio_data/audio` folder. This step in necessary in order to track the indexes of training and val/test dataset.
+  - function `extract_classes` : will extract the binary classes (fire : 1, no fire : 0) from ESC50 dataset
+  - funciton `add_audio` : enables to add the different audio files from ESC50 in the folder `audio_data/audio` while maintaining track of each class.
+  - function `add_background` : the data augmentation step is implemented in this function. The basic principe of this step is to take randomly a fire audio file as a main audio, and a non fire audio file as a background. Then, we decrease the frequency of the background file to avoid sounf domination. Finally, we merge both files in order to obtain as a result a new augmented audio file with non-fire background. Note that we perform if necessary a normalization step in order to prevent clipping.
+  - function `generate_data` : we collect different defined functions here in order to implement the data augmentation. We start by training data augmentation for index tracking reason. Then we perform augmentation on val/test data. The final output in a dataset with equal proportions of fire and no-fire data.
+
 ### main.py
 
 We added to this file the new models we created, and the new binary dataset.
-
