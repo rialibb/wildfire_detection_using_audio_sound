@@ -84,6 +84,7 @@ We also modified the default folder where models where trained. The previous tea
 ### DGX_runs
 
 This is a folder we created. It contains the file `run_model_training.batch` that is to be run when training on the DGX.
+This replaces and improves the job.slurm file that existed before.
 
 ### models.py
 
@@ -100,4 +101,7 @@ We made significant modifications to this file, since the train function from th
 
 We changed the `generate_models` function so that it uses the `output_shape`class attribute of the features when that information is needed in the classifier.
 
+### main.py
+
+We added to this file the new models we created, and the new binary dataset.
 
