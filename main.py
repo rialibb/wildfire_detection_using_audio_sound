@@ -9,8 +9,6 @@ from models import train, FEATURES, generate_models
 
 BATCH_SIZE = 32
 
-MODEL_KWARGS = {"input_size": (256, 2206)} # size of a spectrogram/mel-spectrogram
-
 APPROACH = ESC.TWO  # change the approach based on 2, 10 or 50 classes
 
 # load de the dataset based on the approach selected
@@ -20,7 +18,7 @@ esc_dataset = ESCDataset(download=False,categories=APPROACH) if APPROACH.value!=
 print(f"We are using {esc_dataset} for the dataset")
 print(f"Type of approach : {APPROACH}")
 
-#Uncomment the model to use
+# Uncomment the model to use
 
 # models = generate_models({"spectrogram": Spectrogram}, CNNBardou, "cnn_bardou",approach=APPROACH)
 # models = generate_models(FEATURES, ConvolutionalRNNZhang, "crnn_zhang", approach=APPROACH)
