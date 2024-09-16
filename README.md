@@ -84,6 +84,7 @@ We also modified the default folder where models where trained. The previous tea
 ### DGX_runs
 
 This is a folder we created. It contains the file `run_model_training.batch` that is to be run when training on the DGX.
+This replaces and improves the job.slurm file that existed before.
 
 ### models.py
 
@@ -118,3 +119,6 @@ Since our initial ESC50 dataset contains 50 classes with 40 observations each, c
   - function `add_background` : the data augmentation step is implemented in this function. The basic principe of this step is to take randomly a fire audio file as a main audio, and a non fire audio file as a background. Then, we decrease the frequency of the background file to avoid sounf domination. Finally, we merge both files in order to obtain as a result a new augmented audio file with non-fire background. Note that we perform if necessary a normalization step in order to prevent clipping.
   - function `generate_data` : we collect different defined functions here in order to implement the data augmentation. We start by training data augmentation for index tracking reason. Then we perform augmentation on val/test data. The final output in a dataset with equal proportions of fire and no-fire data.
 
+### main.py
+
+We added to this file the new models we created, and the new binary dataset.
